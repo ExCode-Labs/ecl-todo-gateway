@@ -30,23 +30,19 @@ export function createApp() {
       res.status(200).json({
         status: 'ok',
         service: 'todo-gateway',
-        database: 'ok',
       });
 
       logger.log('info', 'Health Check OK', {
         status: 'ok',
-        database: 'ok',
       });
     } catch {
       logger.log('error', 'Health Check KO', {
         status: 'error',
-        database: 'error',
       });
 
       res.status(503).json({
         status: 'error',
         service: 'todo-backend',
-        database: 'error',
       });
     }
   });

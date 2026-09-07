@@ -27,12 +27,7 @@ const config: Config = {
 
   restoreMocks: true,
 
-  collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/server.ts',
-    '!src/config/**',
-    '!src/generated/**',
-  ],
+  collectCoverageFrom: ['src/**/*.ts', '!src/server.ts', '!src/config/**', '!src/generated/**'],
 
   coverageDirectory: 'coverage',
 
