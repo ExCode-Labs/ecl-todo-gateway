@@ -1,0 +1,22 @@
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: todo-gateway
+    restart: unless-stopped
+
+    env_file:
+      - .env.docker
+
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+
+    ports:
+      - '${PORT}:${PORT}'
+
+    depends_on:
+      postgres:
+        condition: service_healthy
