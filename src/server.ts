@@ -5,7 +5,7 @@ import { logger } from './config/logger';
 const app = createApp();
 
 app.listen(env.PORT, '0.0.0.0', () => {
-  logger.log('info', 'Todo backend started', {
+  logger.log('info', 'Todo Gateway started', {
     port: env.PORT,
     environment: env.NODE_ENV,
   });

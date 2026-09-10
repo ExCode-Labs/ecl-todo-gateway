@@ -1,9 +1,9 @@
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
-import todoRouter from './modules/todo/todo.routes';
 import { env } from './config/env';
 import { logger } from './config/logger';
+import todoRoutes from './modules/todo/todo.routes';
 
 export function createApp() {
   const app = express();
@@ -47,7 +47,7 @@ export function createApp() {
     }
   });
 
-  app.use('/api/todos', todoRouter);
+  app.use('/api/todos', todoRoutes);
 
   return app;
 }
