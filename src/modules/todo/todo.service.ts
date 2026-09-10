@@ -1,7 +1,5 @@
-
 export class TodoService {
   constructor() {}
 
-  async getTodos() {
-  }
+  async getTodos() {}
 }
