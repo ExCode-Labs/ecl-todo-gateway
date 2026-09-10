@@ -11,6 +11,9 @@ const envSchema = z.object({
   FRONTEND_URL_DEV: z.string().url(),
   FRONTEND_URL_UAT: z.string().url(),
   FRONTEND_URL_PROD: z.string().url(),
+
+  // Backend services to proxy to
+  TODO_BACKEND_URL: z.string().url(),
 });
 
 export const env = envSchema.parse(process.env);
