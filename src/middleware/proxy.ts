@@ -14,7 +14,7 @@ export const todoProxy = createProxyMiddleware({
         code: (err as NodeJS.ErrnoException).code,
       });
 
-      (res as import('http').ServerResponse)
+      (res as import('node:http').ServerResponse)
         .writeHead(502, { 'Content-Type': 'application/json' })
         .end(JSON.stringify({ status: 'error', message: 'Upstream unavailable' }));
     },
