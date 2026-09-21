@@ -8,7 +8,7 @@ const getBaseUrl = () => {
 };
 
 const fetcher = axios.create({
-  baseURL: getBaseUrl() + '/api/todos',
+  baseURL: getBaseUrl() + '/api',
   withCredentials: true,
 });
 

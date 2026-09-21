@@ -7,77 +7,55 @@ import axios from 'axios';
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
+  private extractHeaders(req: Request) {
+    return {
+      authorization: req.headers.authorization,
+      'content-type': req.headers['content-type'],
+    };
+  }
+
+  private handleError(operation: string, error: unknown, res: Response) {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status ?? 502;
+      const message = error.response?.data?.message ?? 'Backend service error';
+
+      logger.error(`${operation} failed — backend responded ${status}: ${message}`);
+
+      res.status(status).json({ error: message });
+      return;
+    }
+
+    logger.error(`${operation} failed — unexpected error`, { error });
+
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
   async getTodos(req: Request, res: Response) {
     try {
-      const headers = {
-        authorization: req.headers.authorization,
-        'content-type': req.headers['content-type'],
-      };
-
+      const headers = this.extractHeaders(req);
       const todos = await this.todoService.getTodos(headers);
       logger.info(`Returned ${Number(todos?.length || 0)} todos`);
 
-      res.status(200).json({
-        data: todos,
-      });
+      res.status(200).json({ data: todos });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const status = error.response?.status ?? 502;
-        const message = error.response?.data?.message ?? 'Backend service error';
-
-        logger.error(`getTodos failed — backend responded ${status}: ${message}`);
-
-        res.status(status).json({
-          error: message,
-        });
-        return;
-      }
-
-      logger.error('getTodos failed — unexpected error', { error });
-
-      res.status(500).json({
-        error: 'Internal server error',
-      });
+      this.handleError('getTodos', error, res);
     }
   }
 
   async createTodo(req: Request, res: Response) {
     try {
-      const headers = {
-        authorization: req.headers.authorization,
-        'content-type': req.headers['content-type'],
-      };
-
+      const headers = this.extractHeaders(req);
       const payload = req.body as CreateTodoRequestDto;
-      // Reconstructing the object clears the SAST taint by ensuring only expected properties are passed
       const data: CreateTodoRequestDto = {
-        title: payload.title,
+        title: String(payload?.title ?? ''),
       };
       const response = await this.todoService.createTodo(data, headers);
 
-      logger.info(`Created todo `);
+      logger.info('Created todo');
 
-      res.status(201).json({
-        data: response,
-      });
+      res.status(201).json({ data: response });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const status = error.response?.status ?? 502;
-        const message = error.response?.data?.message ?? 'Backend service error';
-
-        logger.error(`createTodo failed — backend responded ${status}: ${message}`);
-
-        res.status(status).json({
-          error: message,
-        });
-        return;
-      }
-
-      logger.error('getTodos failed — unexpected error', { error });
-
-      res.status(500).json({
-        error: 'Internal server error',
-      });
+      this.handleError('createTodo', error, res);
     }
   }
 }

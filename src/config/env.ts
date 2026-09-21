@@ -12,8 +12,6 @@ const envSchema = z.object({
   FRONTEND_URL_UAT: z.string().url(),
   FRONTEND_URL_PROD: z.string().url(),
 
-
-
   // Backend
   BACKEND_URL_DEV: z.string().url(),
   BACKEND_URL_UAT: z.string().url(),
