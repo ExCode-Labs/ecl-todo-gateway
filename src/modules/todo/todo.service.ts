@@ -1,5 +1,35 @@
+import type { CreateTodoRequestDto, TodoResponseDto } from './todo.dto';
+import fetcher from './todoBackendFetcher';
+import { logger } from '../../config/logger';
+import { TODO_PATHS } from './todo.constant';
+
 export class TodoService {
   constructor() {}
 
-  async getTodos() {}
+  async getTodos(headers?: Record<string, string | undefined>) {
+    const response = await fetcher.get<TodoResponseDto[] | null>(TODO_PATHS.BASE, {
+      headers: {
+        ...(headers?.authorization && { authorization: headers.authorization }),
+
+        ...(headers?.['content-type'] && { 'content-type': headers['content-type'] }),
+      },
+    });
+
+    logger.info('Todos fetched successfully', {
+      service: 'todo-gateway',
+      todos: response.data,
+    });
+
+    return response.data;
+  }
+  async createTodo(data: CreateTodoRequestDto, headers?: Record<string, string | undefined>) {
+    const response = await fetcher.post<TodoResponseDto | null>(TODO_PATHS.BASE, data, {
+      headers: {
+        ...(headers?.authorization && { authorization: headers.authorization }),
+        ...(headers?.['content-type'] && { 'content-type': headers['content-type'] }),
+      },
+    });
+
+    return response.data;
+  }
 }
