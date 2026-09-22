@@ -1,3 +1,3 @@
 export const TODO_PATHS = {
-  BASE: '/todos',
+  todos: '/todos',
 } as const;

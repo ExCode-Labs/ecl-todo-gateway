@@ -1,35 +1,25 @@
 import type { CreateTodoRequestDto, TodoResponseDto } from './todo.dto';
-import fetcher from './todoBackendFetcher';
 import { logger } from '../../config/logger';
 import { TODO_PATHS } from './todo.constant';
+import { Fetcher } from '../../common/http/fetcher';
+import { env } from '../../config/env';
 
 export class TodoService {
-  constructor() {}
-
-  async getTodos(headers?: Record<string, string | undefined>) {
-    const response = await fetcher.get<TodoResponseDto[] | null>(TODO_PATHS.BASE, {
-      headers: {
-        ...(headers?.authorization && { authorization: headers.authorization }),
-
-        ...(headers?.['content-type'] && { 'content-type': headers['content-type'] }),
-      },
-    });
-
-    logger.info('Todos fetched successfully', {
-      service: 'todo-gateway',
-      todos: response.data,
-    });
-
-    return response.data;
+  private readonly fetcher;
+  constructor() {
+    this.fetcher = new Fetcher(env.BACKEND_URL);
   }
-  async createTodo(data: CreateTodoRequestDto, headers?: Record<string, string | undefined>) {
-    const response = await fetcher.post<TodoResponseDto | null>(TODO_PATHS.BASE, data, {
-      headers: {
-        ...(headers?.authorization && { authorization: headers.authorization }),
-        ...(headers?.['content-type'] && { 'content-type': headers['content-type'] }),
-      },
-    });
 
-    return response.data;
+  async getTodos() {
+    const todos = await this.fetcher.get<TodoResponseDto[] | null>(TODO_PATHS.todos);
+
+    logger.info('Todos fetched successfully');
+
+    return todos;
+  }
+  async createTodo(data: CreateTodoRequestDto) {
+    const response = await this.fetcher.post<TodoResponseDto | null>(TODO_PATHS.todos, data);
+
+    return response;
   }
 }

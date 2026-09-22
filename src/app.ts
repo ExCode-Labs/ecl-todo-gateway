@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import { env } from './config/env';
 import { logger } from './config/logger';
 import todoRoutes from './modules/todo/todo.routes';
+import { requestContextMiddleware } from './middleware/request-context';
 
 export function createApp() {
   const app = express();
@@ -15,7 +16,7 @@ export function createApp() {
 
   app.use(
     cors({
-      origin: [env.FRONTEND_URL_DEV, env.FRONTEND_URL_UAT, env.FRONTEND_URL_PROD],
+      origin: [env.FRONTEND_URL],
       credentials: true,
     }),
   );
@@ -26,6 +27,11 @@ export function createApp() {
     logger.http(`${req.method} ${req.originalUrl}`);
     next();
   });
+
+  app.use(requestContextMiddleware);
+
+  app.use('/api/todos', todoRoutes);
+
   app.get('/health', async (_req, res) => {
     try {
       res.status(200).json({
@@ -47,8 +53,6 @@ export function createApp() {
       });
     }
   });
-
-  app.use('/api/todos', todoRoutes);
 
   return app;
 }

@@ -8,14 +8,10 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
 
   // Frontend
-  FRONTEND_URL_DEV: z.string().url(),
-  FRONTEND_URL_UAT: z.string().url(),
-  FRONTEND_URL_PROD: z.string().url(),
+  FRONTEND_URL: z.url(),
 
   // Backend
-  BACKEND_URL_DEV: z.string().url(),
-  BACKEND_URL_UAT: z.string().url(),
-  BACKEND_URL_PROD: z.string().url(),
+  BACKEND_URL: z.url(),
 });
 
 export const env = envSchema.parse(process.env);
