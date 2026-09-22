@@ -1,10 +1,8 @@
 # -----------------------------
 # Build stage
 # -----------------------------
-FROM node:22-alpine AS builder
 
-ARG DATABASE_URL
-ENV DATABASE_URL=$DATABASE_URL
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
@@ -17,7 +15,6 @@ RUN npm ci
 # Copy application source
 COPY . .
 
-
 # Build TypeScript application
 RUN npm run build
 
@@ -25,7 +22,8 @@ RUN npm run build
 # -----------------------------
 # Production stage
 # -----------------------------
-FROM node:22-alpine AS production
+
+FROM node:24-alpine AS production
 
 WORKDIR /app
 
@@ -34,13 +32,14 @@ ENV NODE_ENV=production
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install production dependencies only
 RUN npm ci --omit=dev --ignore-scripts
 
 # Copy compiled application
 COPY --from=builder /app/dist ./dist
 
+# Gateway port
 EXPOSE 3000
 
-# Apply migrations before starting the application
-CMD ["sh", "-c", "node dist/server.js"]
+# Start gateway
+CMD ["node", "dist/server.js"]
