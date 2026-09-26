@@ -3,11 +3,13 @@ name: Todo Gateway CI
 on:
   push:
     branches:
+      - TP-*
       - develop
       - main
 
   pull_request:
     branches:
+      - TP-*
       - develop
       - main
 
@@ -50,10 +52,14 @@ jobs:
 
       - name: Build
         run: npm run build
+
   docker:
     name: Build and Push Docker Image
     needs: quality
     runs-on: ubuntu-latest
+
+    # Build and push Docker image ONLY after code reaches main.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout repository
